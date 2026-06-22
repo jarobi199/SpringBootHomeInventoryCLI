@@ -1,0 +1,26 @@
+package io.homeinventory.alert;
+
+import io.homeinventory.interfaces.AlertStrategy;
+import io.homeinventory.model.Item;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+public class AlertManager {
+
+    private final List<AlertStrategy> strategies;
+
+    public AlertManager(List<AlertStrategy> strategies) {
+        this.strategies = strategies;
+    }
+
+    public List<AlertResult> evaluate(List<Item> items) {
+        return items.stream()
+            .flatMap(item -> strategies.stream()
+                .filter(s -> s.supports(item))
+                .map(s -> s.evaluate(item)))
+            .collect(Collectors.toList());
+    }
+}

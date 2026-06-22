@@ -1,0 +1,6 @@
+package io.homeinventory.enums;
+
+public enum Category {
+    ENTERTAINMENT, COMPUTING, KITCHEN_APPLIANCE, LAUNDRY,
+    SEATING, STORAGE, BEDROOM_FURNITURE, LIGHTING, OTHER
+}
