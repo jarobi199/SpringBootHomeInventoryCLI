@@ -42,11 +42,11 @@ public class ItemService {
         List<Item> items = itemRepository.findByUserId(SessionContext.getUser().getId());
         Table table = Clique.table(TableType.BOX_DRAW)
                 .headers(
-                        "[cyan, bold]NAME[/]",
-                        "[cyan, bold]DESCRIPTION[/]",
-                        "[cyan, bold]TYPE[/]",
-                        "[cyan, bold]CATEGORY[/]",
-                        "[cyan, bold]ESTIMATED VALUE[/]"
+                        "[*blue, bold]NAME[/]",
+                        "[*blue, bold]DESCRIPTION[/]",
+                        "[*blue, bold]TYPE[/]",
+                        "[*blue, bold]CATEGORY[/]",
+                        "[*blue, bold]ESTIMATED VALUE[/]"
                 );
         for (Item item : items) {
             table.row(item.getName(), item.getDescription(), item.getItemType().name(), item.getCategory().name(), "$" + item.getEstimatedValue());
@@ -55,5 +55,16 @@ public class ItemService {
 
     }
 
+    public static void main(String[] args) {
+        Table table = Clique.table(TableType.BOX_DRAW)
+                .headers(
+                        "[*blue, bold]NAME[/]",
+                        "[*blue, bold]DESCRIPTION[/]",
+                        "[*blue, bold]TYPE[/]",
+                        "[*blue, bold]CATEGORY[/]",
+                        "[*blue, bold]ESTIMATED VALUE[/]"
+                );
+        table.render();
+    }
     // findByUserId(), findByRoomId(), findByUserIdAndCategory(), save(), delete()
 }

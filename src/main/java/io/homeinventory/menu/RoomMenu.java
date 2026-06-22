@@ -1,6 +1,7 @@
 package io.homeinventory.menu;
 
 import io.homeinventory.authentication.SessionContext;
+import io.homeinventory.enums.RoomType;
 import io.homeinventory.interfaces.IMenu;
 import io.homeinventory.model.Room;
 import io.homeinventory.service.RoomService;
@@ -18,12 +19,37 @@ public class RoomMenu implements IMenu {
 
     @Override
     public void show() {
+        int choice;
+        do {
+            printOptions();
+            choice = InputHandler.getIntegerInput();
+            switch (choice) {
+                case 2 -> addRoom();
+            }
+        }
+        while (choice != 0);
+    }
 
+    public void addRoom() {
+        System.out.println("Enter the name of the room:");
+        String name = InputHandler.getStringInput();
+        System.out.println("Enter the description of the room:");
+        String description = InputHandler.getStringInput();
+        System.out.println("Enter the room type (LIVING_ROOM, BEDROOM, KITCHEN, BATHROOM, OFFICE, GARAGE, BASEMENT, OTHER):");
+        RoomType roomType = RoomType.valueOf(InputHandler.getStringInput());
+
+        roomService.addRoom(name, description, roomType);
+        System.out.println("Room added!");
     }
 
     @Override
     public void printOptions() {
-
+        System.out.println("[1] List all rooms");
+        System.out.println("[2] Add room");
+        System.out.println("[3] View room contents");
+        System.out.println("[4] Delete room");
+        System.out.println("[0] Exit");
+        System.out.println("Please make a selection:");
     }
 
     public Room listRoomsAndSelect() {

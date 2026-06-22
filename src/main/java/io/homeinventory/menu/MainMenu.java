@@ -13,6 +13,8 @@ public class MainMenu implements IMenu {
     @Autowired
     private ItemMenu itemMenu;
     @Autowired
+    private RoomMenu roomMenu;
+    @Autowired
     private SettingsMenu settingsMenu;
     @Autowired
     private GoodbyeMenu goodbyeMenu;
@@ -29,6 +31,7 @@ public class MainMenu implements IMenu {
             printOptions();
             choice = InputHandler.getIntegerInput();
             menu = switch (choice) {
+                case 1 -> roomMenu;
                 case 2 -> itemMenu;
                 case 5 -> settingsMenu;
                 case 0 -> goodbyeMenu;
