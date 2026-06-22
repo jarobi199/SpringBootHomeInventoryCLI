@@ -2,6 +2,7 @@ package io.homeinventory.model;
 
 import io.homeinventory.depreciation.ModerateDepreciationStrategy;
 import io.homeinventory.enums.Category;
+import io.homeinventory.enums.ItemType;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,10 +17,9 @@ public class ApplianceItem extends Item {
         this.serviceHistory = new ArrayList<ServiceRecord>();
     }
 
-    public ApplianceItem(String userId, String roomId, String name, String description, Category category, double estimatedValue, String notes, LocalDate purchaseDate, int modelNumber, List<ServiceRecord> serviceHistory) {
+    public ApplianceItem(String userId, String roomId, String name, String description, Category category, double estimatedValue, String notes, LocalDate purchaseDate, int modelNumber) {
         super(userId, roomId, name, description, category, estimatedValue, notes, purchaseDate);
         this.modelNumber = modelNumber;
-        this.serviceHistory = serviceHistory;
     }
 
     public int getModelNumber() {
@@ -34,10 +34,6 @@ public class ApplianceItem extends Item {
         return serviceHistory;
     }
 
-    public void setServiceHistory(List<ServiceRecord> serviceHistory) {
-        this.serviceHistory = serviceHistory;
-    }
-
     public void addServiceRecord(ServiceRecord record) {
         serviceHistory.add(record);
     }
@@ -45,5 +41,10 @@ public class ApplianceItem extends Item {
     @Override
     public double calculateDepreciatedValue() {
         return depreciationStrategy.calculate(estimatedValue, purchaseDate);
+    }
+
+    @Override
+    public ItemType getItemType() {
+        return ItemType.FURNITURE;
     }
 }

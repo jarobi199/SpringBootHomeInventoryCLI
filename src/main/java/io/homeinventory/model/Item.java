@@ -1,6 +1,7 @@
 package io.homeinventory.model;
 
 import io.homeinventory.enums.Category;
+import io.homeinventory.enums.ItemType;
 import io.homeinventory.interfaces.DepreciationStrategy;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -119,4 +120,6 @@ public abstract class Item {
     }
 
     public abstract double calculateDepreciatedValue();
+
+    public abstract ItemType getItemType();
 }

@@ -2,6 +2,7 @@ package io.homeinventory.model;
 
 import io.homeinventory.depreciation.AcceleratedDepreciationStrategy;
 import io.homeinventory.enums.Category;
+import io.homeinventory.enums.ItemType;
 
 import java.time.LocalDate;
 
@@ -44,4 +45,10 @@ public class ElectronicItem extends Item {
     public double calculateDepreciatedValue() {
         return depreciationStrategy.calculate(estimatedValue, purchaseDate);
     }
+
+    @Override
+    public ItemType getItemType() {
+        return ItemType.ELECTRONIC;
+    }
+
 }

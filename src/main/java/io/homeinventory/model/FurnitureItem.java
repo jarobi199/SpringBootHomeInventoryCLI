@@ -2,6 +2,7 @@ package io.homeinventory.model;
 
 import io.homeinventory.depreciation.LinearDepreciationStrategy;
 import io.homeinventory.enums.Category;
+import io.homeinventory.enums.ItemType;
 import io.homeinventory.enums.Material;
 
 import java.time.LocalDate;
@@ -64,4 +65,10 @@ public class FurnitureItem extends Item {
     public double calculateDepreciatedValue() {
         return depreciationStrategy.calculate(estimatedValue, purchaseDate);
     }
+
+    @Override
+    public ItemType getItemType() {
+        return ItemType.FURNITURE;
+    }
+
 }
