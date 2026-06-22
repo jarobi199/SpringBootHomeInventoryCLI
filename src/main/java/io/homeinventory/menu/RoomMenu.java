@@ -55,7 +55,7 @@ public class RoomMenu implements IMenu {
     public Room listRoomsAndSelect() {
         int i = 1;
         Room room = null;
-        List<Room> rooms = roomService.getRoomsByUser(SessionContext.getUser().getId());
+        List<Room> rooms = roomService.findRoomsByUserId(SessionContext.getUser().getId());
 
         if (!rooms.isEmpty()) {
             for (Room r : rooms) {

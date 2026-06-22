@@ -45,6 +45,6 @@ public class ApplianceItem extends Item {
 
     @Override
     public ItemType getItemType() {
-        return ItemType.FURNITURE;
+        return ItemType.APPLIANCE;
     }
 }

@@ -18,7 +18,7 @@ public class RoomService {
     @Autowired
     private ItemRepository itemRepository;
 
-    public List<Room> getRoomsByUser(String userId) {
+    public List<Room> findRoomsByUserId(String userId) {
         return roomRepository.findByUserId(userId);
     }
 

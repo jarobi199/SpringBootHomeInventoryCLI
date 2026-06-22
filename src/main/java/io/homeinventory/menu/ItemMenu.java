@@ -5,21 +5,31 @@ import io.homeinventory.enums.Category;
 import io.homeinventory.enums.ItemType;
 import io.homeinventory.enums.Material;
 import io.homeinventory.interfaces.IMenu;
+import io.homeinventory.model.Item;
 import io.homeinventory.model.Room;
 import io.homeinventory.service.ItemService;
+import io.homeinventory.service.RoomService;
 import io.homeinventory.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class ItemMenu implements IMenu {
 
     @Autowired
     private RoomMenu roomMenu;
+
     @Autowired
     ItemService itemService;
+
+    @Autowired
+    RoomService roomService;
 
     @Override
     public void show() {
@@ -49,6 +59,8 @@ public class ItemMenu implements IMenu {
     }
 
     public void viewItemDetail() {
+        Item item = listItemsAndSelect();
+        itemService.viewItemDetail(item);
     }
 
     public void addItem() {
@@ -83,7 +95,7 @@ public class ItemMenu implements IMenu {
                     System.out.println("Enter the model number:");
                     int modelNumber = InputHandler.getIntegerInput();
                     itemService.addApplianceItem(SessionContext.getUser().getId(), room.getId(), name, description, category, estimatedValue, notes, purchaseDate, modelNumber);
-                    System.out.println("Appliance  item added successfully!");
+                    System.out.println("Appliance item added successfully!");
                 }
                 case FURNITURE -> {
                     System.out.println("Enter the width (cm):");
@@ -95,7 +107,7 @@ public class ItemMenu implements IMenu {
                     System.out.println("Enter the type of material:");
                     Material material = Material.valueOf(InputHandler.getStringInput().toUpperCase());
                     itemService.addFurnitureItem(SessionContext.getUser().getId(), room.getId(), name, description, category, estimatedValue, notes, purchaseDate, width, height, depth, material);
-                    System.out.println("Appliance  item added successfully!");
+                    System.out.println("Furniture  item added successfully!");
                 }
             }
         }
@@ -119,4 +131,29 @@ public class ItemMenu implements IMenu {
         System.out.println("[6] Add service record");
         System.out.println("[0] Exit");
     }
+
+    public Item listItemsAndSelect() {
+        int m = 1;
+        Item item = null;
+        List<Item> items = itemService.findItemsByUserId(SessionContext.getUser().getId());
+        Map<String, Room> roomMap = roomService.findRoomsByUserId(SessionContext.getUser().getId()).stream()
+                .collect(Collectors.toMap(
+                        Room::getId,
+                        Function.identity()
+                ));
+
+        if (!items.isEmpty()) {
+            for (Item i : items) {
+                System.out.println("[" + m + "] " + i.getName() + " (" + i.getItemType().name() + ") " + roomMap.get(i.getRoomId()).getName() + " $" + i.getEstimatedValue());
+                m++;
+            }
+            System.out.println("Please select a room:");
+
+            int itemIndex = InputHandler.getIntegerInput() - 1;
+            item = items.get(itemIndex);
+        }
+
+        return item;
+    }
+
 }
