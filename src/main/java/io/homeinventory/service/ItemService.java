@@ -66,13 +66,62 @@ public class ItemService {
     }
 
     public void viewItemDetail(Item item) {
-        PendingTable table = Clique.table(TableType.BOX_DRAW);
-
+        System.out.println("ITEM DETAIL");
         if(ItemType.APPLIANCE.equals(item.getItemType())) {
+            ApplianceItem applianceItem = (ApplianceItem) item;
+            Table table = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[*blue, bold]NAME[/]",
+                            "[*blue, bold]DESCRIPTION[/]",
+                            "[*blue, bold]ROOM[/]",
+                            "[*blue, bold]TYPE[/]",
+                            "[*blue, bold]CATEGORY[/]",
+                            "[*blue, bold]ESTIMATED VALUE[/]",
+                            "[*blue, bold]PURCHASE DATE[/]",
+                            "[*blue, bold]NOTES[/]",
+                            "[*blue, bold]MODEL NUMBER[/]"
+                    );
+            table.row(applianceItem.getName(), applianceItem.getDescription(), applianceItem.getItemType().name(), applianceItem.getCategory().name(), "$" + applianceItem.getEstimatedValue(),
+                    applianceItem.getPurchaseDate().toString(), applianceItem.getNotes(), String.valueOf(applianceItem.getModelNumber()));
+            table.render();
+            System.out.println();
 
+            List<ServiceRecord> serviceRecords = applianceItem.getServiceHistory();
+            if(serviceRecords != null) {
+                System.out.println("SERVICE HISTORY");
+                Table serviceRecordTable = Clique.table(TableType.BOX_DRAW)
+                        .headers(
+                                "[*blue, bold]SERVICE DATE[/]",
+                                "[*blue, bold]DESCRIPTION[/]",
+                                "[*blue, bold]COST[/]",
+                                "[*blue, bold]SERVICED BY[/]"
+                        );
+                for (ServiceRecord serviceRecord : serviceRecords) {
+                    serviceRecordTable.row(serviceRecord.serviceDate().toString(), serviceRecord.description(), "$" + serviceRecord.cost(), serviceRecord.servicedBy());
+                }
+                table.render();
+            }
         }
         else if(ItemType.FURNITURE.equals(item.getItemType())) {
-
+            FurnitureItem furnitureItem = (FurnitureItem) item;
+            Table furnitureItemTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[*blue, bold]NAME[/]",
+                            "[*blue, bold]DESCRIPTION[/]",
+                            "[*blue, bold]ROOM[/]",
+                            "[*blue, bold]TYPE[/]",
+                            "[*blue, bold]CATEGORY[/]",
+                            "[*blue, bold]ESTIMATED VALUE[/]",
+                            "[*blue, bold]PURCHASE DATE[/]",
+                            "[*blue, bold]NOTES[/]",
+                            "[*blue, bold]WIDTH[/]",
+                            "[*blue, bold]HEIGHT[/]",
+                            "[*blue, bold]DEPTH[/]",
+                            "[*blue, bold]MATERIAL[/]"
+                    );
+            furnitureItemTable.row(furnitureItem.getName(), furnitureItem.getDescription(), furnitureItem.getItemType().name(), furnitureItem.getCategory().name(), "$" + furnitureItem.getEstimatedValue(),
+                    furnitureItem.getPurchaseDate().toString(), furnitureItem.getNotes(), String.valueOf(furnitureItem.getWidthCm()), String.valueOf(furnitureItem.getHeightCm()), String.valueOf(furnitureItem.getDepthCm()), String.valueOf(furnitureItem.getMaterial()));
+            furnitureItemTable.render();
         }
         else
         {
