@@ -125,7 +125,22 @@ public class ItemService {
         }
         else
         {
-
+            ElectronicItem electronicItem = (ElectronicItem) item;
+            Table electronicItemTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[*blue, bold]NAME[/]",
+                            "[*blue, bold]DESCRIPTION[/]",
+                            "[*blue, bold]ROOM[/]",
+                            "[*blue, bold]TYPE[/]",
+                            "[*blue, bold]CATEGORY[/]",
+                            "[*blue, bold]ESTIMATED VALUE[/]",
+                            "[*blue, bold]PURCHASE DATE[/]",
+                            "[*blue, bold]NOTES[/]",
+                            "[*blue, bold]MODEL NUMBER[/]"
+                    );
+            electronicItemTable.row(electronicItem.getName(), electronicItem.getDescription(), electronicItem.getItemType().name(), electronicItem.getCategory().name(), "$" + electronicItem.getEstimatedValue(),
+                    electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(), electronicItem.getSerialNumber(), electronicItem.getWarrantyExpiryDate().toString());
+            electronicItemTable.render();
         }
     }
 
