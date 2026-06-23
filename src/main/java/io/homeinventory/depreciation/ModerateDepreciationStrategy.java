@@ -3,11 +3,11 @@ package io.homeinventory.depreciation;
 import io.homeinventory.interfaces.DepreciationStrategy;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
-// ApplianceItem — ~10% per year: value × max(0.10, 1 − 0.10 × yearsOwned)
 public class ModerateDepreciationStrategy implements DepreciationStrategy {
     @Override
     public double calculate(double estimatedValue, LocalDate purchaseDate) {
-        return 0; // TODO
+        return estimatedValue * Math.max(0.1, 1 - 0.1 * ChronoUnit.YEARS.between(purchaseDate, LocalDate.now()));
     }
 }
