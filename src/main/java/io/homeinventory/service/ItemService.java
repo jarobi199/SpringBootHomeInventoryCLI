@@ -170,5 +170,8 @@ public class ItemService {
         itemRepository.save(applianceItem);
     }
 
+    public void deleteItem(Item item) {
+        itemRepository.delete(item);
+    }
     // findByUserId(), findByRoomId(), findByUserIdAndCategory(), save(), delete()
 }

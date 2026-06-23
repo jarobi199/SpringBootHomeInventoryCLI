@@ -24,10 +24,15 @@ public class RoomMenu implements IMenu {
             printOptions();
             choice = InputHandler.getIntegerInput();
             switch (choice) {
+                case 1 -> listAllRooms();
                 case 2 -> addRoom();
             }
         }
         while (choice != 0);
+    }
+
+    public void listAllRooms() {
+        roomService.displayRooms();
     }
 
     public void addRoom() {

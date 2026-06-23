@@ -5,6 +5,7 @@ import io.homeinventory.model.Item;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,6 +22,7 @@ public class AlertManager {
             .flatMap(item -> strategies.stream()
                 .filter(s -> s.supports(item))
                 .map(s -> s.evaluate(item)))
+                .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 }

@@ -42,9 +42,8 @@ public class ItemMenu implements IMenu {
                 case 1 -> listAllItems();
                 case 2 -> addItem();
                 case 3 -> viewItemDetail();
-                case 4 -> editItem();
-                case 5 -> deleteItem();
-                case 6 -> addServiceRecord();
+                case 4 -> deleteItem();
+                case 5 -> addServiceRecord();
             }
         }
         while (choice != 0);
@@ -67,9 +66,9 @@ public class ItemMenu implements IMenu {
     }
 
     public void deleteItem() {
-    }
-
-    public void editItem() {
+        Item toDelete = listItemsAndSelect();
+        itemService.deleteItem(toDelete);
+        System.out.println("Item deleted successfully!");
     }
 
     public void viewItemDetail() {
@@ -140,9 +139,8 @@ public class ItemMenu implements IMenu {
         System.out.println("[1] List all items");
         System.out.println("[2] Add item");
         System.out.println("[3] View item detail");
-        System.out.println("[4] Edit item");
-        System.out.println("[5] Delete item");
-        System.out.println("[6] Add service record");
+        System.out.println("[4] Delete item");
+        System.out.println("[5] Add service record");
         System.out.println("[0] Exit");
     }
 

@@ -3,7 +3,13 @@ package io.homeinventory.alert;
 import io.homeinventory.interfaces.AlertStrategy;
 import io.homeinventory.model.ApplianceItem;
 import io.homeinventory.model.Item;
+import io.homeinventory.model.ServiceRecord;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 // Fires when an ApplianceItem has no service records and is 3+ years old,
 // or when the most recent service record is 2+ years old
@@ -17,6 +23,24 @@ public class ServiceOverdueStrategy implements AlertStrategy {
 
     @Override
     public AlertResult evaluate(Item item) {
-        return null; // TODO
+        AlertResult alertResult = null;
+        ApplianceItem applianceItem = (ApplianceItem) item;
+        if(checkServiceOverdue(applianceItem)) {
+            alertResult = new AlertResult(item, AlertType.SERVICE_OVERDUE, "This appliance is overdue for service!");
+        }
+        return alertResult;
+    }
+
+    private boolean checkServiceOverdue(ApplianceItem applianceItem) {
+        boolean result =  (applianceItem.getServiceHistory().isEmpty()) && ((ChronoUnit.YEARS.between(applianceItem.getPurchaseDate(), LocalDate.now())) > 3);
+        if(!result) {
+            ServiceRecord recentServiceRecord = applianceItem.getServiceHistory().stream()
+                    .sorted(Comparator.comparing(ServiceRecord::serviceDate).reversed()).toList().getFirst();
+            if((ChronoUnit.YEARS.between(recentServiceRecord.serviceDate(), LocalDate.now())) > 3) {
+                result = true;
+            }
+        }
+
+        return result;
     }
 }
