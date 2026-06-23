@@ -50,6 +50,8 @@ public class ItemMenu implements IMenu {
     }
 
     public void addServiceRecord() {
+        Item item = listItemsAndSelect(ItemType.APPLIANCE);
+
     }
 
     public void deleteItem() {
@@ -86,7 +88,7 @@ public class ItemMenu implements IMenu {
                 case ELECTRONIC -> {
                     System.out.println("Enter the serial number:");
                     String serialNumber = InputHandler.getStringInput();
-                    System.out.println("Enter warrany expiry date (yyyy-MM-dd):");
+                    System.out.println("Enter warranty expiry date (yyyy-MM-dd):");
                     LocalDate expiryDate = LocalDate.parse(InputHandler.getStringInput());
                     itemService.addElectronicItem(SessionContext.getUser().getId(), room.getId(), name, description, category, estimatedValue, notes, purchaseDate, serialNumber, expiryDate);
                     System.out.println("Electronic item added successfully!");
@@ -136,6 +138,30 @@ public class ItemMenu implements IMenu {
         int m = 1;
         Item item = null;
         List<Item> items = itemService.findItemsByUserId(SessionContext.getUser().getId());
+        Map<String, Room> roomMap = roomService.findRoomsByUserId(SessionContext.getUser().getId()).stream()
+                .collect(Collectors.toMap(
+                        Room::getId,
+                        Function.identity()
+                ));
+
+        if (!items.isEmpty()) {
+            for (Item i : items) {
+                System.out.println("[" + m + "] " + i.getName() + " (" + i.getItemType().name() + ") " + roomMap.get(i.getRoomId()).getName() + " $" + i.getEstimatedValue());
+                m++;
+            }
+            System.out.println("Please select a room:");
+
+            int itemIndex = InputHandler.getIntegerInput() - 1;
+            item = items.get(itemIndex);
+        }
+
+        return item;
+    }
+
+    public Item listItemsAndSelect(ItemType itemType) {
+        int m = 1;
+        Item item = null;
+        List<Item> items = itemService.findItemsByUserIdAndItemType(SessionContext.getUser().getId(), itemType);
         Map<String, Room> roomMap = roomService.findRoomsByUserId(SessionContext.getUser().getId()).stream()
                 .collect(Collectors.toMap(
                         Room::getId,

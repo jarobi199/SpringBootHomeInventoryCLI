@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,6 +68,10 @@ public class ItemService {
 
     }
 
+    public List<Item> findItemsByUserIdAndItemType(String userId, ItemType itemType) {
+        return itemRepository.findByUserIdAndItemType(userId, itemType);
+    }
+
     public List<Item> findItemsByUserId(String userId) {
         return itemRepository.findByUserId(userId);
     }
@@ -86,12 +91,15 @@ public class ItemService {
                             "[*blue, bold]TYPE[/]",
                             "[*blue, bold]CATEGORY[/]",
                             "[*blue, bold]ESTIMATED VALUE[/]",
+                            "[*blue, bold]DEPRECIATED VALUE[/]",
                             "[*blue, bold]PURCHASE DATE[/]",
                             "[*blue, bold]NOTES[/]",
-                            "[*blue, bold]MODEL NUMBER[/]"
+                            "[*blue, bold]MODEL NUMBER[/]",
+                            "[*blue, bold]YEARS OWNED[/]"
                     );
             table.row(applianceItem.getName(), applianceItem.getDescription(), roomName, applianceItem.getItemType().name(), applianceItem.getCategory().name(), "$" + applianceItem.getEstimatedValue(),
-                    applianceItem.getPurchaseDate().toString(), applianceItem.getNotes(), String.valueOf(applianceItem.getModelNumber()));
+                    "$" + applianceItem.getDepreciationStrategy(), applianceItem.getPurchaseDate().toString(),
+                    applianceItem.getNotes(), String.valueOf(applianceItem.getModelNumber()), String.valueOf(ChronoUnit.YEARS.between(applianceItem.getPurchaseDate(), LocalDate.now())));
             table.render();
             System.out.println();
 
@@ -121,15 +129,18 @@ public class ItemService {
                             "[*blue, bold]TYPE[/]",
                             "[*blue, bold]CATEGORY[/]",
                             "[*blue, bold]ESTIMATED VALUE[/]",
+                            "[*blue, bold]DEPRECIATED VALUE[/]",
                             "[*blue, bold]PURCHASE DATE[/]",
                             "[*blue, bold]NOTES[/]",
                             "[*blue, bold]WIDTH[/]",
                             "[*blue, bold]HEIGHT[/]",
                             "[*blue, bold]DEPTH[/]",
-                            "[*blue, bold]MATERIAL[/]"
+                            "[*blue, bold]MATERIAL[/]",
+                            "[*blue, bold]YEARS OWNED[/]"
                     );
             furnitureItemTable.row(furnitureItem.getName(), furnitureItem.getDescription(), roomName, furnitureItem.getItemType().name(), furnitureItem.getCategory().name(), "$" + furnitureItem.getEstimatedValue(),
-                    furnitureItem.getPurchaseDate().toString(), furnitureItem.getNotes(), String.valueOf(furnitureItem.getWidthCm()), String.valueOf(furnitureItem.getHeightCm()), String.valueOf(furnitureItem.getDepthCm()), String.valueOf(furnitureItem.getMaterial()));
+                    "$" + furnitureItem.getDepreciationStrategy(), furnitureItem.getPurchaseDate().toString(), furnitureItem.getNotes(),
+                    String.valueOf(furnitureItem.getWidthCm()), String.valueOf(furnitureItem.getHeightCm()), String.valueOf(furnitureItem.getDepthCm()), String.valueOf(furnitureItem.getMaterial()), String.valueOf(ChronoUnit.YEARS.between(furnitureItem.getPurchaseDate(), LocalDate.now())));
             furnitureItemTable.render();
         }
         else
@@ -143,13 +154,16 @@ public class ItemService {
                             "[*blue, bold]TYPE[/]",
                             "[*blue, bold]CATEGORY[/]",
                             "[*blue, bold]ESTIMATED VALUE[/]",
+                            "[*blue, bold]DEPRECIATED VALUE[/]",
                             "[*blue, bold]PURCHASE DATE[/]",
                             "[*blue, bold]NOTES[/]",
                             "[*blue, bold]MODEL NUMBER[/]",
-                            "[*blue, bold]WARRANTY EXPIRATION DATE[/]"
+                            "[*blue, bold]WARRANTY EXPIRATION DATE[/]",
+                            "[*blue, bold]YEARS OWNED[/]"
                     );
             electronicItemTable.row(electronicItem.getName(), electronicItem.getDescription(), roomName, electronicItem.getItemType().name(), electronicItem.getCategory().name(), "$" + electronicItem.getEstimatedValue(),
-                    electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(), electronicItem.getSerialNumber(), electronicItem.getWarrantyExpiryDate().toString());
+                    "$" + electronicItem.getDepreciationStrategy(), electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(),
+                    electronicItem.getSerialNumber(), electronicItem.getWarrantyExpiryDate().toString(), String.valueOf(ChronoUnit.YEARS.between(electronicItem.getPurchaseDate(), LocalDate.now())));
             electronicItemTable.render();
         }
     }
