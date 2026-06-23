@@ -5,6 +5,7 @@ import io.homeinventory.enums.Category;
 import io.homeinventory.enums.ItemType;
 import io.homeinventory.enums.Material;
 import io.homeinventory.interfaces.IMenu;
+import io.homeinventory.model.ApplianceItem;
 import io.homeinventory.model.Item;
 import io.homeinventory.model.Room;
 import io.homeinventory.service.ItemService;
@@ -51,7 +52,18 @@ public class ItemMenu implements IMenu {
 
     public void addServiceRecord() {
         Item item = listItemsAndSelect(ItemType.APPLIANCE);
+        ApplianceItem  applianceItem = (ApplianceItem) item;
+        System.out.println("Enter the service date (yyyy-MM-dd):");
+        LocalDate date = InputHandler.getDateInput();
+        System.out.println("Enter the description:");
+        String description = InputHandler.getStringInput();
+        System.out.println("Enter the cost:");
+        double cost = InputHandler.getDoubleInput();
+        System.out.println("Enter the serviced by:");
+        String servicedBy = InputHandler.getStringInput();
 
+        itemService.addServiceRecord(date, description, cost, servicedBy, applianceItem);
+        System.out.println("Service record added!");
     }
 
     public void deleteItem() {
@@ -161,7 +173,7 @@ public class ItemMenu implements IMenu {
     public Item listItemsAndSelect(ItemType itemType) {
         int m = 1;
         Item item = null;
-        List<Item> items = itemService.findItemsByUserIdAndItemType(SessionContext.getUser().getId(), itemType);
+        List<Item> items = itemService.findItemsByUserId(SessionContext.getUser().getId()).stream().filter(i -> i.getItemType().equals(itemType)).toList();
         Map<String, Room> roomMap = roomService.findRoomsByUserId(SessionContext.getUser().getId()).stream()
                 .collect(Collectors.toMap(
                         Room::getId,

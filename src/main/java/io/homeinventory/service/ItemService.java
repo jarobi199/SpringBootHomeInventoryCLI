@@ -68,10 +68,6 @@ public class ItemService {
 
     }
 
-    public List<Item> findItemsByUserIdAndItemType(String userId, ItemType itemType) {
-        return itemRepository.findByUserIdAndItemType(userId, itemType);
-    }
-
     public List<Item> findItemsByUserId(String userId) {
         return itemRepository.findByUserId(userId);
     }
@@ -98,7 +94,7 @@ public class ItemService {
                             "[*blue, bold]YEARS OWNED[/]"
                     );
             table.row(applianceItem.getName(), applianceItem.getDescription(), roomName, applianceItem.getItemType().name(), applianceItem.getCategory().name(), "$" + applianceItem.getEstimatedValue(),
-                    "$" + applianceItem.getDepreciationStrategy(), applianceItem.getPurchaseDate().toString(),
+                    "$" + applianceItem.calculateDepreciatedValue(), applianceItem.getPurchaseDate().toString(),
                     applianceItem.getNotes(), String.valueOf(applianceItem.getModelNumber()), String.valueOf(ChronoUnit.YEARS.between(applianceItem.getPurchaseDate(), LocalDate.now())));
             table.render();
             System.out.println();
@@ -116,7 +112,7 @@ public class ItemService {
                 for (ServiceRecord serviceRecord : serviceRecords) {
                     serviceRecordTable.row(serviceRecord.serviceDate().toString(), serviceRecord.description(), "$" + serviceRecord.cost(), serviceRecord.servicedBy());
                 }
-                table.render();
+                serviceRecordTable.render();
             }
         }
         else if(ItemType.FURNITURE.equals(item.getItemType())) {
@@ -139,7 +135,7 @@ public class ItemService {
                             "[*blue, bold]YEARS OWNED[/]"
                     );
             furnitureItemTable.row(furnitureItem.getName(), furnitureItem.getDescription(), roomName, furnitureItem.getItemType().name(), furnitureItem.getCategory().name(), "$" + furnitureItem.getEstimatedValue(),
-                    "$" + furnitureItem.getDepreciationStrategy(), furnitureItem.getPurchaseDate().toString(), furnitureItem.getNotes(),
+                    "$" + furnitureItem.calculateDepreciatedValue(), furnitureItem.getPurchaseDate().toString(), furnitureItem.getNotes(),
                     String.valueOf(furnitureItem.getWidthCm()), String.valueOf(furnitureItem.getHeightCm()), String.valueOf(furnitureItem.getDepthCm()), String.valueOf(furnitureItem.getMaterial()), String.valueOf(ChronoUnit.YEARS.between(furnitureItem.getPurchaseDate(), LocalDate.now())));
             furnitureItemTable.render();
         }
@@ -162,10 +158,16 @@ public class ItemService {
                             "[*blue, bold]YEARS OWNED[/]"
                     );
             electronicItemTable.row(electronicItem.getName(), electronicItem.getDescription(), roomName, electronicItem.getItemType().name(), electronicItem.getCategory().name(), "$" + electronicItem.getEstimatedValue(),
-                    "$" + electronicItem.getDepreciationStrategy(), electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(),
+                    "$" + electronicItem.calculateDepreciatedValue(), electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(),
                     electronicItem.getSerialNumber(), electronicItem.getWarrantyExpiryDate().toString(), String.valueOf(ChronoUnit.YEARS.between(electronicItem.getPurchaseDate(), LocalDate.now())));
             electronicItemTable.render();
         }
+    }
+
+    public void addServiceRecord(LocalDate date, String description, double cost, String servicedBy, ApplianceItem applianceItem) {
+        ServiceRecord serviceRecord = new ServiceRecord(date, description, cost, servicedBy);
+        applianceItem.addServiceRecord(serviceRecord);
+        itemRepository.save(applianceItem);
     }
 
     // findByUserId(), findByRoomId(), findByUserIdAndCategory(), save(), delete()
