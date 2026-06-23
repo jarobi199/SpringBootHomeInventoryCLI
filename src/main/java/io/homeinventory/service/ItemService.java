@@ -1,7 +1,6 @@
 package io.homeinventory.service;
 
 import io.github.kusoroadeolu.clique.Clique;
-import io.github.kusoroadeolu.clique.components.PendingTable;
 import io.github.kusoroadeolu.clique.components.Table;
 import io.github.kusoroadeolu.clique.configuration.TableType;
 import io.homeinventory.authentication.SessionContext;
@@ -16,7 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -44,6 +46,11 @@ public class ItemService {
 
     public void listAllItems() {
         List<Item> items = itemRepository.findByUserId(SessionContext.getUser().getId());
+        Map<String, Room> roomMap = roomRepository.findByUserId(SessionContext.getUser().getId()).stream()
+                .collect(Collectors.toMap(
+                        Room::getId,
+                        Function.identity()
+                ));
         Table table = Clique.table(TableType.BOX_DRAW)
                 .headers(
                         "[*blue, bold]NAME[/]",
@@ -54,8 +61,7 @@ public class ItemService {
                         "[*blue, bold]ESTIMATED VALUE[/]"
                 );
         for (Item item : items) {
-            Optional<Room> optionalRoom = roomRepository.findById(item.getRoomId());
-            table.row(item.getName(), item.getDescription(), optionalRoom.isPresent() ? optionalRoom.get().getName() : "",  item.getItemType().name(), item.getCategory().name(), "$" + item.getEstimatedValue());
+            table.row(item.getName(), item.getDescription(),  roomMap.get(item.getRoomId()).getName(),  item.getItemType().name(), item.getCategory().name(), "$" + item.getEstimatedValue());
         }
         table.render();
 
@@ -66,6 +72,9 @@ public class ItemService {
     }
 
     public void viewItemDetail(Item item) {
+        Optional<Room> optionalRoom =  roomRepository.findById(item.getRoomId());
+        String roomName = optionalRoom.isPresent() ? optionalRoom.get().getName() : "";
+
         System.out.println("ITEM DETAIL");
         if(ItemType.APPLIANCE.equals(item.getItemType())) {
             ApplianceItem applianceItem = (ApplianceItem) item;
@@ -81,7 +90,7 @@ public class ItemService {
                             "[*blue, bold]NOTES[/]",
                             "[*blue, bold]MODEL NUMBER[/]"
                     );
-            table.row(applianceItem.getName(), applianceItem.getDescription(), applianceItem.getItemType().name(), applianceItem.getCategory().name(), "$" + applianceItem.getEstimatedValue(),
+            table.row(applianceItem.getName(), applianceItem.getDescription(), roomName, applianceItem.getItemType().name(), applianceItem.getCategory().name(), "$" + applianceItem.getEstimatedValue(),
                     applianceItem.getPurchaseDate().toString(), applianceItem.getNotes(), String.valueOf(applianceItem.getModelNumber()));
             table.render();
             System.out.println();
@@ -119,7 +128,7 @@ public class ItemService {
                             "[*blue, bold]DEPTH[/]",
                             "[*blue, bold]MATERIAL[/]"
                     );
-            furnitureItemTable.row(furnitureItem.getName(), furnitureItem.getDescription(), furnitureItem.getItemType().name(), furnitureItem.getCategory().name(), "$" + furnitureItem.getEstimatedValue(),
+            furnitureItemTable.row(furnitureItem.getName(), furnitureItem.getDescription(), roomName, furnitureItem.getItemType().name(), furnitureItem.getCategory().name(), "$" + furnitureItem.getEstimatedValue(),
                     furnitureItem.getPurchaseDate().toString(), furnitureItem.getNotes(), String.valueOf(furnitureItem.getWidthCm()), String.valueOf(furnitureItem.getHeightCm()), String.valueOf(furnitureItem.getDepthCm()), String.valueOf(furnitureItem.getMaterial()));
             furnitureItemTable.render();
         }
@@ -136,9 +145,10 @@ public class ItemService {
                             "[*blue, bold]ESTIMATED VALUE[/]",
                             "[*blue, bold]PURCHASE DATE[/]",
                             "[*blue, bold]NOTES[/]",
-                            "[*blue, bold]MODEL NUMBER[/]"
+                            "[*blue, bold]MODEL NUMBER[/]",
+                            "[*blue, bold]WARRANTY EXPIRATION DATE[/]"
                     );
-            electronicItemTable.row(electronicItem.getName(), electronicItem.getDescription(), electronicItem.getItemType().name(), electronicItem.getCategory().name(), "$" + electronicItem.getEstimatedValue(),
+            electronicItemTable.row(electronicItem.getName(), electronicItem.getDescription(), roomName, electronicItem.getItemType().name(), electronicItem.getCategory().name(), "$" + electronicItem.getEstimatedValue(),
                     electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(), electronicItem.getSerialNumber(), electronicItem.getWarrantyExpiryDate().toString());
             electronicItemTable.render();
         }
