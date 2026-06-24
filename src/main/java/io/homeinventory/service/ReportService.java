@@ -7,12 +7,14 @@ import io.homeinventory.authentication.SessionContext;
 import io.homeinventory.enums.ItemType;
 import io.homeinventory.model.Item;
 import io.homeinventory.model.Room;
+import io.homeinventory.model.RoomSummary;
 import io.homeinventory.repository.ItemRepository;
 import io.homeinventory.repository.RoomRepository;
 import io.homeinventory.util.BarChartUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,8 +56,11 @@ public class ReportService {
 
     public void generateRoomReport() {
         List<Room> rooms = roomRepository.findByUserId(SessionContext.getUser().getId());
+        List<RoomSummary> roomSummaries = new ArrayList<>();
+        System.out.println("| ROOM SUMMARY |");
         Table table = Clique.table(TableType.BOX_DRAW)
                 .headers(
+                        "",
                         "[*blue, bold]NAME[/]",
                         "[*blue, bold]TYPE[/]",
                         "[*blue, bold]ITEM COUNT[/]",
@@ -63,12 +68,22 @@ public class ReportService {
                         "[*blue, bold]DEPRECATED TOTAL[/]"
                 );
         for(Room room : rooms) {
-            int itemCount = itemRepository.findByRoomId(room.getId()).size();
-            double estimatedTotal =  itemRepository.findByRoomId(room.getId()).stream().mapToDouble(Item::getEstimatedValue).sum();
-            double depreciatedTotal =  itemRepository.findByRoomId(room.getId()).stream().mapToDouble(Item::calculateDepreciatedValue).sum();
-
+            List<Item> items = itemRepository.findByRoomId(room.getId());
+            int itemCount = items.size();
+            double estimatedTotal =  items.stream().mapToDouble(Item::getEstimatedValue).sum();
+            double depreciatedTotal =  items.stream().mapToDouble(Item::calculateDepreciatedValue).sum();
+            RoomSummary roomSummary = new RoomSummary(room.getName(), room.getRoomType(), itemCount, estimatedTotal, depreciatedTotal, items);
+            table.row("", roomSummary.name(), roomSummary.type().name(), String.valueOf(roomSummary.itemCount()), "$" + roomSummary.totalEstimatedValue(), "$" + roomSummary.totalDepreciatedValue());
+            roomSummaries.add(roomSummary);
         }
+
+        int grandTotalItemCount = roomSummaries.stream().mapToInt(RoomSummary::itemCount).sum();
+        double grandTotalEstimatedTotal = roomSummaries.stream().mapToDouble(RoomSummary::totalEstimatedValue).sum();
+        double grandDepreciatedValue = roomSummaries.stream().mapToDouble(RoomSummary::totalDepreciatedValue).sum();
+
+        table.row( "[*blue, bold]TOTAL[/]", "", "", String.valueOf(grandTotalItemCount), "$" + grandTotalEstimatedTotal, "$" + grandDepreciatedValue);
         table.render();
+
     }
 
     public void generateInsuranceReport() {

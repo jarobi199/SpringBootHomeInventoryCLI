@@ -16,6 +16,7 @@ public class Room {
     public Room() {
         //No argument constructor
     }
+
     public Room(String userId, String name, String description, RoomType roomType) {
         this.userId = userId;
         this.name = name;

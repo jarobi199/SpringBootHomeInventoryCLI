@@ -1,6 +1,7 @@
 package io.homeinventory.model;
 
-public class RoomSummary {
-    // TODO: roomName, roomType, itemCount, totalEstimatedValue, totalDepreciatedValue, List<Item> items
-    // Transient — never persisted
-}
+import io.homeinventory.enums.RoomType;
+
+import java.util.List;
+
+public record RoomSummary (String name, RoomType type, int itemCount, double totalEstimatedValue, double totalDepreciatedValue, List<Item> items) {}
