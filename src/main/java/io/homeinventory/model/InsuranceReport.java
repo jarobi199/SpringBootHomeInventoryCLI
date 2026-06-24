@@ -1,6 +1,7 @@
 package io.homeinventory.model;
 
-public class InsuranceReport {
-    // TODO: ownerName, reportDate, totalEstimatedValue, totalDepreciatedValue, List<RoomSummary> roomSummaries
-    // Transient — never persisted
-}
+import java.time.LocalDateTime;
+import java.util.List;
+
+public record InsuranceReport (String ownerName, LocalDateTime reportDateTime, double totalEstimatedValue, double totalDepreciatedValue, List<RoomSummary> roomSummaries) {}
+

@@ -38,7 +38,7 @@ public class ReportService {
                         "[*blue, bold]TOTAL ITEMS[/]",
                         "[*blue, bold]TOTAL ROOMS[/]",
                         "[*blue, bold]TOTAL ESTIMATED VALUE[/]",
-                        "[*blue, bold]TOTAL DEPRECATED VALUE[/]"
+                        "[*blue, bold]TOTAL DEPRECIATED VALUE[/]"
                 )
                 .row(String.valueOf(totalItems), String.valueOf(totalRooms), "$" + totalEstimatedValue, "$" + totalDeprecatedValue);
         table.render();
@@ -57,8 +57,7 @@ public class ReportService {
 
 
     public void generateRoomReport() {
-        List<Room> rooms = roomRepository.findByUserId(SessionContext.getUser().getId());
-        List<RoomSummary> roomSummaries = new ArrayList<>();
+        List<RoomSummary> roomSummaries = generateRoomSummaries();
         System.out.println("| ROOM SUMMARY |");
         Table table = Clique.table(TableType.BOX_DRAW)
                 .headers(
@@ -67,16 +66,8 @@ public class ReportService {
                         "[*blue, bold]TYPE[/]",
                         "[*blue, bold]ITEM COUNT[/]",
                         "[*blue, bold]ESTIMATED TOTAL[/]",
-                        "[*blue, bold]DEPRECATED TOTAL[/]"
+                        "[*blue, bold]DEPRECIATED TOTAL[/]"
                 );
-        for(Room room : rooms) {
-            List<Item> items = itemRepository.findByRoomId(room.getId());
-            int itemCount = items.size();
-            double estimatedTotal =  items.stream().mapToDouble(Item::getEstimatedValue).sum();
-            double depreciatedTotal =  items.stream().mapToDouble(Item::calculateDepreciatedValue).sum();
-            RoomSummary roomSummary = new RoomSummary(room.getName(), room.getRoomType(), itemCount, estimatedTotal, depreciatedTotal, items);
-            roomSummaries.add(roomSummary);
-        }
 
         roomSummaries = roomSummaries.stream().sorted(Comparator.comparing(RoomSummary::totalEstimatedValue)).toList();
         for(RoomSummary roomSummary : roomSummaries) {
@@ -98,9 +89,50 @@ public class ReportService {
         System.out.println("NAME: " + SessionContext.getUser().getName());
         System.out.println("DATE AND TIME: " + LocalDateTime.now().toString());
         System.out.println("ADDRESS: 555 Anylane Drive, Anytown TX 30123");
+
+        List<RoomSummary> roomSummaries = generateRoomSummaries();
+        for (RoomSummary roomSummary : roomSummaries) {
+            System.out.println(roomSummary.name());
+            Table table = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "",
+                            "[*blue, bold]NAME[/]",
+                            "[*blue, bold]DESCRIPTION[/]",
+                            "[*blue, bold]CATEGORY[/]",
+                            "[*blue, bold]PURCHASE DATE[/]",
+                            "[*blue, bold]ESTIMATED VALUE[/]",
+                            "[*blue, bold]DEPRECIATED TOTAL[/]"
+                    );
+            for(Item item : roomSummary.items()) {
+                table.row(item.getName(), item.getDescription(), item.getCategory().name(), item.getPurchaseDate().toString(), "$" + item.getEstimatedValue());
+            }
+            table.render();
+            System.out.println("ROOM " +  roomSummary.name() + " TOTAL: $" + roomSummary.totalEstimatedValue());
+        }
+        System.out.println();
+        System.out.println("----------------------");
+        System.out.println("GRAND TOTAL OF ALL ROOMS: $" + roomSummaries.stream().mapToDouble(RoomSummary::totalEstimatedValue).sum());
+        System.out.println("----------------------");
+        System.out.println();
+        System.out.println("====================================");
     }
 
     public void getValueByCategory() {
 
+    }
+
+    private List<RoomSummary> generateRoomSummaries() {
+        List<Room> rooms = roomRepository.findByUserId(SessionContext.getUser().getId());
+        List<RoomSummary> roomSummaries = new ArrayList<>();
+        for(Room room : rooms) {
+            List<Item> items = itemRepository.findByRoomId(room.getId());
+            int itemCount = items.size();
+            double estimatedTotal =  items.stream().mapToDouble(Item::getEstimatedValue).sum();
+            double depreciatedTotal =  items.stream().mapToDouble(Item::calculateDepreciatedValue).sum();
+            RoomSummary roomSummary = new RoomSummary(room.getName(), room.getRoomType(), itemCount, estimatedTotal, depreciatedTotal, items);
+            roomSummaries.add(roomSummary);
+        }
+
+        return roomSummaries;
     }
 }
