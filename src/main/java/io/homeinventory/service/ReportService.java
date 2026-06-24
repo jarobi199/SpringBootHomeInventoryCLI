@@ -60,10 +60,12 @@ public class ReportService {
                         "[*blue, bold]TYPE[/]",
                         "[*blue, bold]ITEM COUNT[/]",
                         "[*blue, bold]ESTIMATED TOTAL[/]",
-                        "[*blue, bold]DEPRECATED TOTAL[/]",
-                        "[*blue, bold]TOTAL DEPRECATED VALUE[/]"
+                        "[*blue, bold]DEPRECATED TOTAL[/]"
                 );
         for(Room room : rooms) {
+            int itemCount = itemRepository.findByRoomId(room.getId()).size();
+            double estimatedTotal =  itemRepository.findByRoomId(room.getId()).stream().mapToDouble(Item::getEstimatedValue).sum();
+            double depreciatedTotal =  itemRepository.findByRoomId(room.getId()).stream().mapToDouble(Item::calculateDepreciatedValue).sum();
 
         }
         table.render();
