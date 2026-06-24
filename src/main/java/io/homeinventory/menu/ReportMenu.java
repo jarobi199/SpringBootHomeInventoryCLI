@@ -43,9 +43,9 @@ public class ReportMenu implements IMenu {
 
     @Override
     public void printOptions() {
-        System.out.println("[1]  Home summary");
-        System.out.println("[2]  Room-by-room report");
-        System.out.println("[3]  Insurance report");
+        System.out.println("[1] Home summary");
+        System.out.println("[2] Room-by-room report");
+        System.out.println("[3] Insurance report");
         System.out.println("[4] Value by category");
         System.out.println("[0] Back");
     }

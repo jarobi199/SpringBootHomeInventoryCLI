@@ -4,9 +4,11 @@ import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.components.Table;
 import io.github.kusoroadeolu.clique.configuration.TableType;
 import io.homeinventory.authentication.SessionContext;
+import io.homeinventory.enums.ItemType;
 import io.homeinventory.model.Item;
 import io.homeinventory.repository.ItemRepository;
 import io.homeinventory.repository.RoomRepository;
+import io.homeinventory.util.BarChartUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ public class ReportService {
         double totalEstimatedValue = itemRepository.findByUserId(SessionContext.getUser().getId()).stream().mapToDouble(Item::getEstimatedValue).sum();
         double totalDeprecatedValue = itemRepository.findByUserId(SessionContext.getUser().getId()).stream().mapToDouble(Item::getEstimatedValue).sum();
 
+        System.out.println("HOME SUMMARY");
         Table table = Clique.table(TableType.BOX_DRAW)
                 .headers(
                         "[*blue, bold]TOTAL ITEMS[/]",
@@ -31,7 +34,20 @@ public class ReportService {
                         "[*blue, bold]TOTAL DEPRECATED VALUE[/]"
                 )
                 .row(String.valueOf(totalItems), String.valueOf(totalRooms), "$" + totalEstimatedValue, "$" + totalDeprecatedValue);
+        table.render();
+        System.out.println();
+
+        var barChart = BarChartUtil.builder().title("TOTAL VALUE BY ITEM TYPE");
+        for(ItemType itemType : ItemType.values()) {
+            double totalByType = itemRepository.findByUserId(SessionContext.getUser().getId())
+                    .stream().filter(item -> itemType.equals(item.getItemType()))
+                    .mapToDouble(Item::getEstimatedValue).sum();
+            barChart.bar(itemType.name(), totalByType);
+        }
+        barChart.showTotal(true);
+        barChart.render();
     }
+
 
     public void generateRoomReport() {
 
