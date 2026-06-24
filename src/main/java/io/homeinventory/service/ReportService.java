@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -73,14 +74,18 @@ public class ReportService {
             double estimatedTotal =  items.stream().mapToDouble(Item::getEstimatedValue).sum();
             double depreciatedTotal =  items.stream().mapToDouble(Item::calculateDepreciatedValue).sum();
             RoomSummary roomSummary = new RoomSummary(room.getName(), room.getRoomType(), itemCount, estimatedTotal, depreciatedTotal, items);
-            table.row("", roomSummary.name(), roomSummary.type().name(), String.valueOf(roomSummary.itemCount()), "$" + roomSummary.totalEstimatedValue(), "$" + roomSummary.totalDepreciatedValue());
             roomSummaries.add(roomSummary);
+        }
+
+        roomSummaries = roomSummaries.stream().sorted(Comparator.comparing(RoomSummary::totalEstimatedValue)).toList();
+        for(RoomSummary roomSummary : roomSummaries) {
+            table.row("", roomSummary.name(), roomSummary.type().name(), String.valueOf(roomSummary.itemCount()), "$" + roomSummary.totalEstimatedValue(), "$" + roomSummary.totalDepreciatedValue());
+
         }
 
         int grandTotalItemCount = roomSummaries.stream().mapToInt(RoomSummary::itemCount).sum();
         double grandTotalEstimatedTotal = roomSummaries.stream().mapToDouble(RoomSummary::totalEstimatedValue).sum();
         double grandDepreciatedValue = roomSummaries.stream().mapToDouble(RoomSummary::totalDepreciatedValue).sum();
-
         table.row( "[*blue, bold]TOTAL[/]", "", "", String.valueOf(grandTotalItemCount), "$" + grandTotalEstimatedTotal, "$" + grandDepreciatedValue);
         table.render();
 
