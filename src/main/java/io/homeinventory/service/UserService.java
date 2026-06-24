@@ -44,8 +44,12 @@ public class UserService {
 
     public void deleteUser(String username) {
         Optional<User> toDelete = userRepository.findByUsername(username);
-        toDelete.ifPresent(user -> userRepository.delete(user));
-        System.out.println("User " + username + " has been deleted!");
+        toDelete.ifPresent(user -> {
+            itemRepository.deleteByUserId(user.getId());
+            roomRepository.deleteByUserId(user.getId());
+            userRepository.delete(user);
+            System.out.println("User " + username + " has been deleted!");
+        });
     }
 
     public void setHighValueThreshold(int highValue) {

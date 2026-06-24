@@ -25,7 +25,7 @@ public class SettingsMenu implements IMenu {
                 case 1 -> changePassword();
                 case 2 -> setHighValueThreshold();
                 case 3 -> addUser();
-                //case 4 -> deleteUser();
+                case 4 -> deleteUser();
             }
         }
         while (choice != 0);
@@ -35,8 +35,11 @@ public class SettingsMenu implements IMenu {
         if(verifyAdmin()) {
             System.out.println("Enter the username of the user that you want to delete:");
             String username = InputHandler.getStringInput();
-
-            userService.deleteUser(username);
+            System.out.println("Are you sure you want to delete this user? (Y/N):");
+            String answer = InputHandler.getStringInput();
+            if("Y".equalsIgnoreCase(answer)) {
+                userService.deleteUser(username);
+            }
         }
     }
 
@@ -52,7 +55,6 @@ public class SettingsMenu implements IMenu {
             Role role = Role.valueOf(InputHandler.getStringInput());
             System.out .println("Enter the value of the high value threshold:");
             int highValue = InputHandler.getIntegerInput();
-            User newUser = new User(fullName, username, password, role, highValue);
 
             userService.addUser(fullName, username, password, role, highValue);
             System.out.println("Your user has been added!");
@@ -74,12 +76,10 @@ public class SettingsMenu implements IMenu {
     public void printOptions() {
         System.out.println("[1] Change password");
         System.out.println("[2] Set high value threshold");
-
         if(verifyAdmin()) {
             System.out.println("[3] Add user");
             System.out.println("[4] Delete user");
         }
-
         System.out.println("[0] Exit");
         System.out.println("Please make a selection:");
     }
