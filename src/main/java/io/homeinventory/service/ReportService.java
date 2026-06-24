@@ -6,11 +6,14 @@ import io.github.kusoroadeolu.clique.configuration.TableType;
 import io.homeinventory.authentication.SessionContext;
 import io.homeinventory.enums.ItemType;
 import io.homeinventory.model.Item;
+import io.homeinventory.model.Room;
 import io.homeinventory.repository.ItemRepository;
 import io.homeinventory.repository.RoomRepository;
 import io.homeinventory.util.BarChartUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ReportService {
@@ -50,7 +53,20 @@ public class ReportService {
 
 
     public void generateRoomReport() {
+        List<Room> rooms = roomRepository.findByUserId(SessionContext.getUser().getId());
+        Table table = Clique.table(TableType.BOX_DRAW)
+                .headers(
+                        "[*blue, bold]NAME[/]",
+                        "[*blue, bold]TYPE[/]",
+                        "[*blue, bold]ITEM COUNT[/]",
+                        "[*blue, bold]ESTIMATED TOTAL[/]",
+                        "[*blue, bold]DEPRECATED TOTAL[/]",
+                        "[*blue, bold]TOTAL DEPRECATED VALUE[/]"
+                );
+        for(Room room : rooms) {
 
+        }
+        table.render();
     }
 
     public void generateInsuranceReport() {

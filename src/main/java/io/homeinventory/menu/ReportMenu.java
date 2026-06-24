@@ -35,6 +35,7 @@ public class ReportMenu implements IMenu {
     }
 
     public void roomReport() {
+        reportService.generateRoomReport();
     }
 
     public void homeSummary() {
