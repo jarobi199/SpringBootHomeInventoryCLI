@@ -14,6 +14,7 @@ import io.homeinventory.util.BarChartUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -92,7 +93,11 @@ public class ReportService {
     }
 
     public void generateInsuranceReport() {
-
+        System.out.println("| INSURANCE REPORT |");
+        System.out.println("====================================");
+        System.out.println("NAME: " + SessionContext.getUser().getName());
+        System.out.println("DATE AND TIME: " + LocalDateTime.now().toString());
+        System.out.println("ADDRESS: 555 Anylane Drive, Anytown TX 30123");
     }
 
     public void getValueByCategory() {
