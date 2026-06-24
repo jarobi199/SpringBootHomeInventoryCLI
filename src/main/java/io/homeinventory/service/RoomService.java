@@ -62,6 +62,8 @@ public class RoomService {
                     item.getCategory().name(), "$" + item.getEstimatedValue(), "$" + item.calculateDepreciatedValue());
         }
         table.render();
+        double roomTotal = items.stream().mapToDouble(Item::getEstimatedValue).sum();
+        System.out.println("ROOM TOTAL: $" + roomTotal);
     }
 
     public void deleteRoom(Room room) {
