@@ -68,6 +68,10 @@ public class ItemService {
 
     }
 
+    public List<Item>  findItemsByRoomId(String roomId) {
+        return itemRepository.findByRoomId(roomId);
+    }
+
     public List<Item> findItemsByUserId(String userId) {
         return itemRepository.findByUserId(userId);
     }

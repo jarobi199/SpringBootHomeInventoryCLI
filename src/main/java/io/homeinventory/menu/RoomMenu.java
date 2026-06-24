@@ -3,7 +3,9 @@ package io.homeinventory.menu;
 import io.homeinventory.authentication.SessionContext;
 import io.homeinventory.enums.RoomType;
 import io.homeinventory.interfaces.IMenu;
+import io.homeinventory.model.Item;
 import io.homeinventory.model.Room;
+import io.homeinventory.service.ItemService;
 import io.homeinventory.service.RoomService;
 import io.homeinventory.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ public class RoomMenu implements IMenu {
 
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private ItemService itemService;
 
     @Override
     public void show() {
@@ -26,9 +30,26 @@ public class RoomMenu implements IMenu {
             switch (choice) {
                 case 1 -> listAllRooms();
                 case 2 -> addRoom();
+                case 3 -> viewRoomDetails();
+                case 4 -> deleteRoom();
+
             }
         }
         while (choice != 0);
+    }
+
+    private void deleteRoom() {
+        Room room = listRoomsAndSelect();
+        System.out.println("Are you sure that you want to delete this room? (Y/N):");
+        String answer = InputHandler.getStringInput();
+        if ("Y".equalsIgnoreCase(answer)) {
+            roomService.deleteRoom(room);
+        }
+    }
+
+    public void viewRoomDetails() {
+        Room room = listRoomsAndSelect();
+        roomService.listRoomContents(room);
     }
 
     public void listAllRooms() {
