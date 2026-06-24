@@ -85,17 +85,16 @@ public class ReportService {
 
     public void generateInsuranceReport() {
         System.out.println("| INSURANCE REPORT |");
-        System.out.println("====================================");
+        System.out.println("========================================================================================");
         System.out.println("NAME: " + SessionContext.getUser().getName());
         System.out.println("DATE AND TIME: " + LocalDateTime.now().toString());
         System.out.println("ADDRESS: 555 Anylane Drive, Anytown TX 30123");
-
+        System.out.println();
         List<RoomSummary> roomSummaries = generateRoomSummaries();
         for (RoomSummary roomSummary : roomSummaries) {
             System.out.println(roomSummary.name());
             Table table = Clique.table(TableType.BOX_DRAW)
                     .headers(
-                            "",
                             "[*blue, bold]NAME[/]",
                             "[*blue, bold]DESCRIPTION[/]",
                             "[*blue, bold]CATEGORY[/]",
@@ -104,17 +103,17 @@ public class ReportService {
                             "[*blue, bold]DEPRECIATED TOTAL[/]"
                     );
             for(Item item : roomSummary.items()) {
-                table.row(item.getName(), item.getDescription(), item.getCategory().name(), item.getPurchaseDate().toString(), "$" + item.getEstimatedValue());
+                table.row(item.getName(), item.getDescription(), item.getCategory().name(), item.getPurchaseDate().toString(), "$" + item.getEstimatedValue(), "$" + item.calculateDepreciatedValue());
             }
             table.render();
-            System.out.println("ROOM " +  roomSummary.name() + " TOTAL: $" + roomSummary.totalEstimatedValue());
+            System.out.println("TOTAL: $" + roomSummary.totalEstimatedValue());
+            System.out.println();
         }
-        System.out.println();
-        System.out.println("----------------------");
+
+        System.out.println("--------------------------------------");
         System.out.println("GRAND TOTAL OF ALL ROOMS: $" + roomSummaries.stream().mapToDouble(RoomSummary::totalEstimatedValue).sum());
-        System.out.println("----------------------");
-        System.out.println();
-        System.out.println("====================================");
+        System.out.println("--------------------------------------");
+        System.out.println("========================================================================================");
     }
 
     public void getValueByCategory() {
