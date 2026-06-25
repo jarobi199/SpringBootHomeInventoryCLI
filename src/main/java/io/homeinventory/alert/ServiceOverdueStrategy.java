@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
-// Fires when an ApplianceItem has no service records and is 3+ years old,
-// or when the most recent service record is 2+ years old
 @Component
 public class ServiceOverdueStrategy implements AlertStrategy {
 

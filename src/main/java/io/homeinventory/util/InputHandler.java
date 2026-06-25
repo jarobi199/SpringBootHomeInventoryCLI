@@ -3,6 +3,7 @@ package io.homeinventory.util;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -123,6 +124,11 @@ public class InputHandler {
                 System.err.println("[InputHandler] Error closing debug reader: " + e.getMessage());
             }
         }
+    }
+
+    public static String formatAsMoney(double value) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        return "$" + df.format(value);
     }
 
     // ----------------------------------------------------------------

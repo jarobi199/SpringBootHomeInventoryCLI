@@ -9,6 +9,7 @@ import io.homeinventory.model.Item;
 import io.homeinventory.model.Room;
 import io.homeinventory.repository.ItemRepository;
 import io.homeinventory.repository.RoomRepository;
+import io.homeinventory.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +60,7 @@ public class RoomService {
                 );
         for (Item item : items) {
             table.row(item.getName(), item.getDescription(), item.getItemType().name(),
-                    item.getCategory().name(), "$" + item.getEstimatedValue(), "$" + item.calculateDepreciatedValue());
+                    item.getCategory().name(), InputHandler.formatAsMoney(item.getEstimatedValue()), InputHandler.formatAsMoney( item.calculateDepreciatedValue()));
         }
         table.render();
         double roomTotal = items.stream().mapToDouble(Item::getEstimatedValue).sum();
@@ -78,5 +79,4 @@ public class RoomService {
         }
     }
 
-    // findByUserId(), save(), delete() — rejects if items exist
 }

@@ -11,6 +11,7 @@ import io.homeinventory.model.RoomSummary;
 import io.homeinventory.repository.ItemRepository;
 import io.homeinventory.repository.RoomRepository;
 import io.homeinventory.util.BarChartUtil;
+import io.homeinventory.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class ReportService {
         int totalItems = itemRepository.findByUserId(SessionContext.getUser().getId()).size();
         int totalRooms = roomRepository.findByUserId(SessionContext.getUser().getId()).size();
         double totalEstimatedValue = itemRepository.findByUserId(SessionContext.getUser().getId()).stream().mapToDouble(Item::getEstimatedValue).sum();
-        double totalDeprecatedValue = itemRepository.findByUserId(SessionContext.getUser().getId()).stream().mapToDouble(Item::getEstimatedValue).sum();
+        double totalDepreciatedValue = itemRepository.findByUserId(SessionContext.getUser().getId()).stream().mapToDouble(Item::getEstimatedValue).sum();
 
         System.out.println("HOME SUMMARY");
         Table table = Clique.table(TableType.BOX_DRAW)
@@ -40,7 +41,7 @@ public class ReportService {
                         "[*blue, bold]TOTAL ESTIMATED VALUE[/]",
                         "[*blue, bold]TOTAL DEPRECIATED VALUE[/]"
                 )
-                .row(String.valueOf(totalItems), String.valueOf(totalRooms), "$" + totalEstimatedValue, "$" + totalDeprecatedValue);
+                .row(String.valueOf(totalItems), String.valueOf(totalRooms), InputHandler.formatAsMoney(totalEstimatedValue), InputHandler.formatAsMoney(totalDepreciatedValue));
         table.render();
         System.out.println();
 
@@ -71,14 +72,14 @@ public class ReportService {
 
         roomSummaries = roomSummaries.stream().sorted(Comparator.comparing(RoomSummary::totalEstimatedValue)).toList();
         for(RoomSummary roomSummary : roomSummaries) {
-            table.row("", roomSummary.name(), roomSummary.type().name(), String.valueOf(roomSummary.itemCount()), "$" + roomSummary.totalEstimatedValue(), "$" + roomSummary.totalDepreciatedValue());
+            table.row("", roomSummary.name(), roomSummary.type().name(), String.valueOf(roomSummary.itemCount()), InputHandler.formatAsMoney(roomSummary.totalEstimatedValue()),InputHandler.formatAsMoney(roomSummary.totalDepreciatedValue()));
 
         }
 
         int grandTotalItemCount = roomSummaries.stream().mapToInt(RoomSummary::itemCount).sum();
         double grandTotalEstimatedTotal = roomSummaries.stream().mapToDouble(RoomSummary::totalEstimatedValue).sum();
         double grandDepreciatedValue = roomSummaries.stream().mapToDouble(RoomSummary::totalDepreciatedValue).sum();
-        table.row( "[*blue, bold]TOTAL[/]", "", "", String.valueOf(grandTotalItemCount), "$" + grandTotalEstimatedTotal, "$" + grandDepreciatedValue);
+        table.row( "[*blue, bold]TOTAL[/]", "", "", String.valueOf(grandTotalItemCount), InputHandler.formatAsMoney(grandTotalEstimatedTotal),InputHandler.formatAsMoney(grandDepreciatedValue));
         table.render();
 
     }
@@ -103,7 +104,7 @@ public class ReportService {
                             "[*blue, bold]DEPRECIATED TOTAL[/]"
                     );
             for(Item item : roomSummary.items()) {
-                table.row(item.getName(), item.getDescription(), item.getCategory().name(), item.getPurchaseDate().toString(), "$" + item.getEstimatedValue(), "$" + item.calculateDepreciatedValue());
+                table.row(item.getName(), item.getDescription(), item.getCategory().name(), item.getPurchaseDate().toString(),InputHandler.formatAsMoney(item.getEstimatedValue()), InputHandler.formatAsMoney(item.calculateDepreciatedValue()));
             }
             table.render();
             System.out.println("TOTAL: $" + roomSummary.totalEstimatedValue());

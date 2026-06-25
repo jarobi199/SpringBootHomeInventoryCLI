@@ -156,7 +156,7 @@ public class ItemMenu implements IMenu {
 
         if (!items.isEmpty()) {
             for (Item i : items) {
-                System.out.println("[" + m + "] " + i.getName() + " (" + i.getItemType().name() + ") " + roomMap.get(i.getRoomId()).getName() + " $" + i.getEstimatedValue());
+                System.out.println("[" + m + "] " + i.getName() + " (" + i.getItemType().name() + ") " + roomMap.get(i.getRoomId()).getName() + InputHandler.formatAsMoney(i.getEstimatedValue()));
                 m++;
             }
             System.out.println("Please select a room:");
@@ -180,7 +180,7 @@ public class ItemMenu implements IMenu {
 
         if (!items.isEmpty()) {
             for (Item i : items) {
-                System.out.println("[" + m + "] " + i.getName() + " (" + i.getItemType().name() + ") " + roomMap.get(i.getRoomId()).getName() + " $" + i.getEstimatedValue());
+                System.out.println("[" + m + "] " + i.getName() + " (" + i.getItemType().name() + ") " + roomMap.get(i.getRoomId()).getName() + InputHandler.formatAsMoney(i.getEstimatedValue()));
                 m++;
             }
             System.out.println("Please select a room:");

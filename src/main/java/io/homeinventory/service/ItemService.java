@@ -10,6 +10,7 @@ import io.homeinventory.enums.Material;
 import io.homeinventory.model.*;
 import io.homeinventory.repository.ItemRepository;
 import io.homeinventory.repository.RoomRepository;
+import io.homeinventory.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -161,8 +162,8 @@ public class ItemService {
                             "[*blue, bold]WARRANTY EXPIRATION DATE[/]",
                             "[*blue, bold]YEARS OWNED[/]"
                     );
-            electronicItemTable.row(electronicItem.getName(), electronicItem.getDescription(), roomName, electronicItem.getItemType().name(), electronicItem.getCategory().name(), "$" + electronicItem.getEstimatedValue(),
-                    "$" + electronicItem.calculateDepreciatedValue(), electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(),
+            electronicItemTable.row(electronicItem.getName(), electronicItem.getDescription(), roomName, electronicItem.getItemType().name(), electronicItem.getCategory().name(), InputHandler.formatAsMoney(electronicItem.getEstimatedValue()),
+                    InputHandler.formatAsMoney(electronicItem.calculateDepreciatedValue()), electronicItem.getPurchaseDate().toString(), electronicItem.getNotes(),
                     electronicItem.getSerialNumber(), electronicItem.getWarrantyExpiryDate().toString(), String.valueOf(ChronoUnit.YEARS.between(electronicItem.getPurchaseDate(), LocalDate.now())));
             electronicItemTable.render();
         }
@@ -177,5 +178,5 @@ public class ItemService {
     public void deleteItem(Item item) {
         itemRepository.delete(item);
     }
-    // findByUserId(), findByRoomId(), findByUserIdAndCategory(), save(), delete()
+
 }

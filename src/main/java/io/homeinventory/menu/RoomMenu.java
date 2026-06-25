@@ -3,9 +3,7 @@ package io.homeinventory.menu;
 import io.homeinventory.authentication.SessionContext;
 import io.homeinventory.enums.RoomType;
 import io.homeinventory.interfaces.IMenu;
-import io.homeinventory.model.Item;
 import io.homeinventory.model.Room;
-import io.homeinventory.service.ItemService;
 import io.homeinventory.service.RoomService;
 import io.homeinventory.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +16,6 @@ public class RoomMenu implements IMenu {
 
     @Autowired
     private RoomService roomService;
-    @Autowired
-    private ItemService itemService;
 
     @Override
     public void show() {
