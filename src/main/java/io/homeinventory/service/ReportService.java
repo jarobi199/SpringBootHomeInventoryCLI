@@ -4,7 +4,9 @@ import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.components.Table;
 import io.github.kusoroadeolu.clique.configuration.TableType;
 import io.homeinventory.authentication.SessionContext;
+import io.homeinventory.enums.Category;
 import io.homeinventory.enums.ItemType;
+import io.homeinventory.model.CategorySummary;
 import io.homeinventory.model.Item;
 import io.homeinventory.model.Room;
 import io.homeinventory.model.RoomSummary;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
@@ -118,7 +121,27 @@ public class ReportService {
     }
 
     public void getValueByCategory() {
+        List<Item> items = itemRepository.findByUserId(SessionContext.getUser().getId());
+        List<CategorySummary> categorySummaries = items.stream()
+                .collect(Collectors.groupingBy(Item::getCategory))
+                .entrySet().stream()
+                .map(e -> new CategorySummary(
+                        e.getKey(),
+                        e.getValue().stream().mapToDouble(Item::getEstimatedValue).sum(),
+                        e.getValue().size()))
+                .sorted(Comparator.comparingDouble(CategorySummary::totalValue).reversed())
+                .toList();
 
+        Table table = Clique.table(TableType.BOX_DRAW)
+                .headers(
+                        "[*blue, bold]CATEGORY[/]",
+                        "[*blue, bold]TOTAL ESTIMATED VALUE[/]",
+                        "[*blue, bold]ITEM COUNT[/]"
+                );
+        for(CategorySummary categorySummary : categorySummaries) {
+            table.row(categorySummary.category().name(), InputHandler.formatAsMoney(categorySummary.totalValue()), String.valueOf(categorySummary.itemCount()));
+        }
+        table.render();
     }
 
     private List<RoomSummary> generateRoomSummaries() {
