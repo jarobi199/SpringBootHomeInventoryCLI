@@ -14,6 +14,8 @@ public class SettingsMenu implements IMenu {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthenticateMenu authenticateMenu;
 
     @Override
     public void show() {
@@ -24,11 +26,16 @@ public class SettingsMenu implements IMenu {
             switch (choice) {
                 case 1 -> changePassword();
                 case 2 -> setHighValueThreshold();
-                case 3 -> addUser();
-                case 4 -> deleteUser();
+                case 3 -> switchUser();
+                case 4 -> addUser();
+                case 5 -> deleteUser();
             }
         }
         while (choice != 0);
+    }
+
+    private void switchUser() {
+        authenticateMenu.show();
     }
 
     public void deleteUser() {
@@ -52,7 +59,7 @@ public class SettingsMenu implements IMenu {
             System.out.println("Enter your password:");
             String password = InputHandler.getStringInput();
             System.out.println("Enter your role (ADMINISTRATOR, USER):");
-            Role role = Role.valueOf(InputHandler.getStringInput());
+            Role role = Role.valueOf(InputHandler.getStringInput().toUpperCase());
             System.out .println("Enter the value of the high value threshold:");
             int highValue = InputHandler.getIntegerInput();
 
@@ -76,9 +83,10 @@ public class SettingsMenu implements IMenu {
     public void printOptions() {
         System.out.println("[1] Change password");
         System.out.println("[2] Set high value threshold");
+        System.out.println("[3] Switch user");
         if(verifyAdmin()) {
-            System.out.println("[3] Add user");
-            System.out.println("[4] Delete user");
+            System.out.println("[4] Add user");
+            System.out.println("[5] Delete user");
         }
         System.out.println("[0] Exit");
         System.out.println("Please make a selection:");
