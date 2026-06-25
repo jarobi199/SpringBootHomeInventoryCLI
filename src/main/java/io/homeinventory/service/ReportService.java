@@ -92,7 +92,6 @@ public class ReportService {
         System.out.println("========================================================================================");
         System.out.println("NAME: " + SessionContext.getUser().getName());
         System.out.println("DATE AND TIME: " + LocalDateTime.now().toString());
-        System.out.println("ADDRESS: 555 Anylane Drive, Anytown TX 30123");
         System.out.println();
         List<RoomSummary> roomSummaries = generateRoomSummaries();
         for (RoomSummary roomSummary : roomSummaries) {

@@ -29,6 +29,7 @@ public class ReportMenu implements IMenu {
     }
 
     public void valueByCategory() {
+        reportService.getValueByCategory();
     }
 
     public void insuranceReport() {
